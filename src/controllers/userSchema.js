@@ -225,6 +225,9 @@ exports.updateProfile = async (req, res) => {
     }
     const decodedToken = jwt.verify(req.headers.authorization, DEFAULT_SECRECT_KEY)
     if (decodedToken) {
+      if (req.body.password != '' && req.body.password != null && req.body.password != undefined) {
+        req.body.password = await brcypt.hashSync(req.body.password)
+      }
       const user = await UserModel.findByIdAndUpdate(decodedToken.userId, {
         ...req.body
       }, {
