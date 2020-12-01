@@ -1,15 +1,9 @@
-const express = require('express');
+const express = require('express')
+// const dbinit = require('./src/includes/dbInit')
 const app = express()
-const port = 5000
+const port = 8080
 
-// const userRouter = require('./src/routers/user');
-const utilsRouter = require('./src/routers/uilities')
-const categoriesRoomRouter = require('./src/routers/categoriesRoom')
-const categoriesQuanRouter = require('./src/routers/categoriesDistrict')
-const roomRouter = require('./src/routers/room')
-const roleRouter = require('./src/routers/role')
-const peopleRouter = require('./src/routers/peopleRouter')
-
+const generalRouter = require('./src/routers/index')
 
 // cấu hình bodyParser
 const bodyParser = require('body-parser');
@@ -21,11 +15,5 @@ const connectDB = require('./src/config/config')
 connectDB();
 
 app.get('/', (req, res) => res.send('Hello World!'))
-// app.use(userRouter)
-app.use(utilsRouter)
-app.use(categoriesRoomRouter)
-app.use(categoriesQuanRouter)
-app.use(roomRouter)
-app.use(roleRouter)
-app.use(peopleRouter)
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+app.use(generalRouter)
+app.listen(port, () => console.log(`Server listing port: ${port}`))

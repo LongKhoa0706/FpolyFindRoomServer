@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema({
+const UserModel = new Schema({
     roles : [{
         type: Schema.Types.ObjectId,
-        require: true,
         ref: "Role"
     }],
     email: {
@@ -24,21 +23,18 @@ const UserSchema = new Schema({
         type: String
     },
     avatar: {
-        type: String
+        type: String,
+        default: 'https://via.placeholder.com/300'
     },
     create_at: {
         type: Date,
-        default: Date.now,
+        default: Date.now
     },
     update_at: {
         type: Date,
-        default: Date.now,
-    },
-    loginning: {
-        type: Schema.Types.ObjectId,
-        ref: "Role"
+        default: Date.now
     }
 })
 
-const user = mongoose.model('People', UserSchema);
+const user = mongoose.model('User', UserModel);
 module.exports = user;
