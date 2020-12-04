@@ -4,7 +4,7 @@ const brcypt = require('bcryptjs')
 const UserModel = require('../models/userModel')
 const RoleModel = require('../models/roleModel')
 // ----------------------------
-const {DEFAULT_SECRECT_KEY, TOKEN_EXPIRED} = require('../includes/default')
+const { DEFAULT_SECRECT_KEY, TOKEN_EXPIRED } = require('../includes/default')
 
 
 exports.checkPhone = async (req, res) => {
@@ -255,108 +255,3 @@ exports.updateProfile = async (req, res) => {
     })
   }
 }
-
-// exports.getListInnkeeper = async (req,res) => {
-//   try{
-//     const innkeeper = await UserModel.findOne(roles)
-//     if(innkeeper){
-//       return res.status(200).send({
-//         statusCode: res.statusCode,
-//         message: 'Lấy danh sách thành công',
-//         success: true,
-//         data: innkeeper
-//       })
-//     }
-//   }catch(e){
-//     return res.status(500).send({
-//       statusCode: res.statusCode,
-//       message: 'Please check your server',
-//       success: false,
-//       data: e
-//     })
-//   }
-// }
-
-// exports.loginCustormerByPhone = async (req, res) => {
-//   try {
-//     const user = await UserModel.findOne({ phone: req.body.phone })
-//     if (user) {
-//       const isEqual = await brcypt.compare(req.body.password, user.password)
-//       if (isEqual) {
-//         const token = jwt.sign({ userId: user.id, phone: user.phone }, 'zVZ6MohG0SAniGPEkEcPEfUQG', {expiresIn: '30d'})
-//         const role = await Role.findOne({'role_name': 'customer'})
-//         await UserModel.findByIdAndUpdate(user.id, {
-//           loginning: role._id,
-//           roles: [role._id]
-//         }, {
-//           new: true
-//         })
-//         const userLogin = await UserModel.findById(user.id).populate('roles').populate('loginning')
-//         return res.status(200).send({
-//           statusCode: res.statusCode,
-//           message: 'Login success',
-//           success: true,
-//           data: {
-//             ...userLogin._doc,
-//             token: token
-//           }
-//         })
-//       }
-//     }
-//     return res.status(400).send({
-//       statusCode: res.statusCode,
-//       message: 'Not found phone',
-//       success: false,
-//       data: null
-//     })
-//   } catch (e) {
-//     return res.status(500).send({
-//       statusCode: res.statusCode,
-//       message: 'Please check your server',
-//       success: false,
-//       data: null
-//     })
-//   }
-// }
-
-// exports.loginInnkeeperByPhone = async (req, res) => {
-//   try {
-//     const user = await UserModel.findOne({ phone: req.body.phone })
-//     if (user) {
-//       const isEqual = await brcypt.compare(req.body.password, user.password)
-//       if (isEqual) {
-//         const token = jwt.sign({ userId: user.id, phone: user.phone }, 'zVZ6MohG0SAniGPEkEcPEfUQG', {expiresIn: '30d'})
-//         const role = await Role.findOne({'role_name': 'innkeeper'})
-//         await UserModel.findByIdAndUpdate(user.id, {
-//           loginning: role._id,
-//           roles: [role._id]
-//         }, {
-//           new: true
-//         })
-//         const userLogin = await UserModel.findById(user.id).populate('roles').populate('loginning')
-//         return res.status(200).send({
-//           statusCode: res.statusCode,
-//           message: 'Login success',
-//           success: true,
-//           data: {
-//             ...userLogin._doc,
-//             token: token
-//           }
-//         })
-//       }
-//     }
-//     return res.status(400).send({
-//       statusCode: res.statusCode,
-//       message: 'Not found email',
-//       success: false,
-//       data: null
-//     })
-//   } catch (e) {
-//     return res.status(500).send({
-//       statusCode: res.statusCode,
-//       message: 'Please check your server',
-//       success: false,
-//       data: null
-//     })
-//   }
-// }

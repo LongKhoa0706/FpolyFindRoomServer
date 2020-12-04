@@ -1,31 +1,33 @@
-const UserModel = require('../models/user');
+const jwt = require('jsonwebtoken')
+const { DEFAULT_SECRECT_KEY } = require('../includes/default')
+
+const UserModel = require('../models/userModel')
 
 class Authorization {
     constructor () {
-        this.userId = 0;
+        this.userId = 0
     }
 
     async authorize(req,  cap ) {
         try {
-            var users = null;
-            if (req.body.socialType == 'facebook') {
-                users = await UserModel.findOne({$and: [{socialType: req.body.socialType}, {idFacebook: req.body.idSocial}]}).populate("roles");
+            if (req.headers.authorization == null || req.headers.authorization == undefined || req.headers.authorization == '') {
+                return false
             } else {
-                users = await UserModel.findOne({$and: [{socialType: req.body.socialType}, {idGoogle: req.body.idSocial}]}).populate("roles");
-            }
-            // const user = await UserModel.findById("5f95374d48c85106e1170b3a").populate("roles");
-            for ( let role of users.roles ) {
-                if ( role.capabilities.indexOf(cap) !== -1 ) {
-                    return true;
+                const decodedToken = jwt.verify(req.headers.authorization, DEFAULT_SECRECT_KEY)
+                const users = await UserModel.findById(decodedToken.userId).populate('roles')
+                for ( let role of users.roles ) {
+                    if ( role.capabilities.indexOf(cap) !== -1 ) {
+                        return true
+                    }
                 }
             }
         }
         catch(e) {
-            return false;
+            return false
         }
 
-        return false;
+        return false
     }
 }
 
-module.exports =  new Authorization();
+module.exports =  new Authorization()
