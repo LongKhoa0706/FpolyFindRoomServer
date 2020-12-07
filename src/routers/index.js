@@ -5,6 +5,7 @@ const router = express.Router()
 const roleSchema = require('../controllers/roleSchema')
 const userSchema = require('../controllers/userSchema')
 const utilitySchema = require('../controllers/utilitySchema');
+const roomSchema = require('../controllers/roomSchema');
 
 // Boy Parser
 const bodyParser = require('body-parser')
@@ -29,6 +30,10 @@ router.post('/udpate-utility/:id', utilitySchema.updateUtility)
 router.get('/delete-utility/:id', utilitySchema.deleteUtility)
 router.get('/utilities', utilitySchema.utilities) // Get all
 router.get('/utility/:id', utilitySchema.utility) // Get by id
+
+// Room setup route
+router.post('/create-room', roomSchema.addRoom)
+router.get('/rooms', roomSchema.rooms)
 
 // Exports
 module.exports = router
