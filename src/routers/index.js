@@ -33,6 +33,7 @@ router.get('/utility/:id', utilitySchema.utility) // Get by id
 
 // Room setup route
 router.post('/create-room', roomSchema.addRoom)
+router.post('/update-room/:id', roomSchema.updateRoom)
 router.get('/rooms', roomSchema.rooms)
 
 // Exports

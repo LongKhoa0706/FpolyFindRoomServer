@@ -15,8 +15,16 @@ exports.mesagesCode = {
     code: 200,
     message: 'Tạo phòng thành công'
   },
+  updateroom_success: {
+    code: 200,
+    message: 'Cập nhật phòng thành công'
+  },
   get_room_success: {
     code: 200,
     message: 'Lấy danh sách phòng thành công'
+  },
+  not_found: {
+    code: 404,
+    message: 'Không tìm thấy'
   }
 }
