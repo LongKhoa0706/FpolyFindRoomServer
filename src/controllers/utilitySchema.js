@@ -1,5 +1,8 @@
 const UtilityModel = require('../models/utilityModel')
+// 
 const Validation = require('../includes/validation');
+// 
+const messageVI = require('../includes/message_vi')
 
 exports.addUtility = async (req,res,next) => {
   try {
@@ -28,8 +31,8 @@ exports.addUtility = async (req,res,next) => {
   } catch (e) {
     return res.status(500).send({
       statusCode: res.statusCode,
-      success:false,
-      message: 'Lỗi kết nối!',
+      success: false,
+      message: messageVI.mesagesCode.server_error.message,
       data: []
     })
   }
@@ -73,8 +76,8 @@ exports.updateUtility = async (req,res,next) => {
   } catch (e) {
     return res.status(500).send({
       statusCode: res.statusCode,
-      success:false,
-      message: 'Lỗi kết nối!',
+      success: false,
+      message: messageVI.mesagesCode.server_error.message,
       data: []
     })
   }
@@ -118,8 +121,8 @@ exports.deleteUtility = async (req,res,next) => {
   } catch (e) {
     return res.status(500).send({
       statusCode: res.statusCode,
-      success:false,
-      message: 'Lỗi kết nối!',
+      success: false,
+      message: messageVI.mesagesCode.server_error.message,
       data: []
     })
   }
@@ -150,8 +153,8 @@ exports.utilities = async (req,res,next) => {
   } catch (e) {
     return res.status(500).send({
       statusCode: res.statusCode,
-      success:false,
-      message: 'Lỗi kết nối!',
+      success: false,
+      message: messageVI.mesagesCode.server_error.message,
       data: []
     })
   }
@@ -190,8 +193,8 @@ exports.utility = async (req,res,next) => {
   } catch (e) {
     return res.status(500).send({
       statusCode: res.statusCode,
-      success:false,
-      message: 'Lỗi kết nối!',
+      success: false,
+      message: messageVI.mesagesCode.server_error.message,
       data: []
     })
   }

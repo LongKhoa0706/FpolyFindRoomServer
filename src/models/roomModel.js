@@ -18,6 +18,9 @@ const RoomModel = new Schema({
   image: [{
     type: String
   }],
+  coordinates: [{
+    type: Number
+  }],
   description: {
     type: String
   },

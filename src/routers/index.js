@@ -12,9 +12,11 @@ const bodyParser = require('body-parser')
 router.use(bodyParser.urlencoded({extended: true}))
 router.use(bodyParser.json())
 
-// Route setup route
+// Role setup route
 router.post('/create-role', roleSchema.addRole)
-router.post('/add-capabilities', roleSchema.addCapabilities)
+router.post('/add-capabilities/:id', roleSchema.addCapabilities)
+router.get('/roles', roleSchema.roles)
+router.get('/role/:id', roleSchema.role)
 
 // User setup route
 router.post('/register', userSchema.register)
@@ -35,6 +37,9 @@ router.get('/utility/:id', utilitySchema.utility) // Get by id
 router.post('/create-room', roomSchema.addRoom)
 router.post('/update-room/:id', roomSchema.updateRoom)
 router.get('/rooms', roomSchema.rooms)
+router.get('/my-rooms', roomSchema.myRooms)
+router.get('/room/:id', roomSchema.room)
+router.get('/delete-room/:id', roomSchema.deleteRoom)
 
 // Exports
 module.exports = router

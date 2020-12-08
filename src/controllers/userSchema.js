@@ -3,6 +3,10 @@ const brcypt = require('bcryptjs')
 // ----------------------------
 const UserModel = require('../models/userModel')
 const RoleModel = require('../models/roleModel')
+// 
+const messageVI = require('../includes/message_vi')
+// 
+const Function = require('../includes/function')
 // ----------------------------
 const { DEFAULT_SECRECT_KEY, TOKEN_EXPIRED } = require('../includes/default')
 
@@ -12,32 +16,32 @@ exports.checkPhone = async (req, res) => {
     if (req.body.phone != undefined && req.body.phone != null && req.body.phone != '') {
       const phone = await UserModel.findOne({'phone': req.body.phone})
       if (phone) {
-        return res.status(200).send({
+        return res.status(messageVI.mesagesCode.account_exists.code).send({
           statusCode: res.statusCode,
-          message: 'Tài khoản này đã được đăng ký ', 
+          message: messageVI.mesagesCode.account_exists.message, 
           success: true, 
           data: phone
         })
       } else {
-        return res.status(200).send({
+        return res.status(messageVI.mesagesCode.phone_not_register.code).send({
           statusCode: res.statusCode,
-          message: 'Số điện thoại này chưa được đăng ký', 
+          message:  messageVI.mesagesCode.phone_not_register.message, 
           success: true, 
           data: true
         })
       }
     } else {
-      return res.status(400).send({
+      return res.status(messageVI.mesagesCode.please_enter_phone.code).send({
         statusCode: res.statusCode, 
-        message: 'Vui lòng nhập số điện thoại ', 
+        message: messageVI.mesagesCode.please_enter_phone.message, 
         success: false, 
         data: null
       })
     }
   } catch (e) {
-    return res.status(500).send({
+    return res.status(messageVI.mesagesCode.server_error.code).send({
       statusCode: res.statusCode,
-      message: 'Please check your server',
+      message: messageVI.mesagesCode.server_error.message,
       success: false, data: null
     })
   }
@@ -46,46 +50,49 @@ exports.checkPhone = async (req, res) => {
 exports.register = async (req, res) => {
   try {
     if (req.body.phone != undefined && req.body.phone != null && req.body.phone != '') {
+      req.body.email = req.body.email.toLowerCase()
       const phone = await UserModel.findOne({'phone': req.body.phone})
       const email = await UserModel.findOne({'email': req.body.email})
       if (phone) {
-        return res.status(400).send({
+        return res.status(messageVI.mesagesCode.phone_valid.code).send({
           statusCode: res.statusCode,
-          message: 'Phone number already in use', 
+          message: messageVI.mesagesCode.phone_valid.message, 
           success: false, 
           data: null
         })
        } else if (email) {
-        return res.status(400).send({
+        return res.status(messageVI.mesagesCode.email_valid.code).send({
           statusCode: res.statusCode,
-          message: 'Email already in use', 
+          message: messageVI.mesagesCode.email_valid.message, 
           success: false, 
           data: null
         })
       } else {
         req.body.password = await brcypt.hashSync(req.body.password)
-        const customer = await RoleModel.findOne({'role_name': 'customer'})
+        const customer = await RoleModel.findOne({'role_name': req.body.role_name})
         req.body.roles = [customer._id]
+        req.body = await Function.lowerCaseFunction(req.body)
         const user = await new UserModel(req.body).save()
-        const dataUser = await UserModel.findById(user._id).populate('roles','role_name')
-        return res.status(200).send({
+        const dataUser = await UserModel.findById(user._id).populate('roles')
+        return res.status(messageVI.mesagesCode.register_success.code).send({
           statusCode: res.statusCode,
           success: true, 
+          mesage: messageVI.mesagesCode.register_success.mesage,
           data: dataUser
         })
       }
     } else {
-      return res.status(400).send({
+      return res.status(messageVI.mesagesCode.please_enter_phone.code).send({
         statusCode: res.statusCode, 
-        message: 'Please enter the phone number', 
+        message: messageVI.mesagesCode.please_enter_phone.message, 
         success: false, 
         data: null
       })
     }
   } catch (err) {
-    return res.status(500).send({
+    return res.status(messageVI.mesagesCode.server_error.code).send({
       statusCode: res.statusCode,
-      message: 'Please check your server',
+      message: messageVI.mesagesCode.server_error.message,
       success: false,
       data: null
     })
@@ -99,9 +106,9 @@ exports.login = async (req, res) => {
       const isEqual = await brcypt.compare(req.body.password, user.password)
       if (isEqual) {
         const token = jwt.sign({ userId: user.id, phone: user.phone }, DEFAULT_SECRECT_KEY, {expiresIn: TOKEN_EXPIRED})
-        return res.status(200).send({
+        return res.status(messageVI.mesagesCode.login_success.code).send({
           statusCode: res.statusCode,
-          message: 'Đăng nhập thành công',
+          message: messageVI.mesagesCode.login_success.message,
           success: true,
           data: {
             ...user._doc,
@@ -109,24 +116,24 @@ exports.login = async (req, res) => {
           }
         })
       } else {
-        return res.status(400).send({
+        return res.status(messageVI.mesagesCode.password_incorect.code).send({
           statusCode: res.statusCode,
-          message: 'Mật khẩu không chính xác ',
+          message: messageVI.mesagesCode.password_incorect.message,
           success: false,
           data: null
         })
       }
     }
-    return res.status(400).send({
+    return res.status(messageVI.mesagesCode.phone_not_register_in_login.code).send({
       statusCode: res.statusCode,
-      message: 'Số điện thoại chưa được đăng ký ',
+      message: messageVI.mesagesCode.phone_not_register_in_login.message,
       success: false,
       data: null
     })
   } catch (e) {
-    return res.status(500).send({
+    return res.status(messageVI.mesagesCode.server_error.code).send({
       statusCode: res.statusCode,
-      message: 'Please check your server',
+      message: messageVI.mesagesCode.server_error.message,
       success: false,
       data: null
     })
@@ -138,24 +145,24 @@ exports.profile = async (req, res) => {
     const decodedToken = jwt.verify(req.headers.authorization, DEFAULT_SECRECT_KEY)
     if (decodedToken) {
       const user = await UserModel.findById(decodedToken.userId).populate('roles')
-      return res.status(200).send({
+      return res.status(messageVI.mesagesCode.profile_success.code).send({
         statusCode: res.statusCode,
-        message: 'Profile success',
+        message: messageVI.mesagesCode.profile_success.message,
         success: true,
         data: user
       })
     } else {
-      return res.status(401).send({
+      return res.status(messageVI.mesagesCode.please_login.code).send({
         statusCode: res.statusCode,
-        message: 'Please log in',
+        message: messageVI.mesagesCode.please_login.message,
         success: false,
         data: null
       })
     }
   } catch (e) {
-    return res.status(500).send({
+    return res.status(messageVI.mesagesCode.server_error.code).send({
       statusCode: res.statusCode,
-      message: 'Please check your server',
+      message: messageVI.mesagesCode.server_error.message,
       success: false,
       data: null
     })
@@ -165,9 +172,9 @@ exports.profile = async (req, res) => {
 exports.updateRole = async (req, res) => {
   try {
     if (req.headers.authorization == null || req.headers.authorization == undefined || req.headers.authorization == '') {
-      return res.status(401).send({
+      return res.status(messageVI.mesagesCode.please_login.code).send({
         statusCode: res.statusCode,
-        message: 'Please log in',
+        message: messageVI.mesagesCode.please_login.message,
         success: false,
         data: null
       })
@@ -181,32 +188,32 @@ exports.updateRole = async (req, res) => {
         }, {
           new: true
         })
-        return res.status(200).send({
+        return res.status(messageVI.mesagesCode.update_role_success.code).send({
           statusCode: res.statusCode,
-          message: 'Profile success',
+          message: messageVI.mesagesCode.update_role_success.message,
           success: true,
           data: user
         })
       } else {
-        return res.status(404).send({
+        return res.status(messageVI.mesagesCode.not_found_role.code).send({
           statusCode: res.statusCode,
-          message: 'Not found role',
+          message: messageVI.mesagesCode.not_found_role.message,
           success: false,
           data: null
         })
       }
     } else {
-      return res.status(401).send({
+      return res.status(messageVI.mesagesCode.please_login.code).send({
         statusCode: res.statusCode,
-        message: 'Please log in',
+        message: messageVI.mesagesCode.please_login.message,
         success: false,
         data: null
       })
     }
   } catch (e) {
-    return res.status(500).send({
+    return res.status(messageVI.mesagesCode.server_error.code).send({
       statusCode: res.statusCode,
-      message: 'Please check your server',
+      message: messageVI.mesagesCode.server_error.message,
       success: false,
       data: null
     })
@@ -216,13 +223,14 @@ exports.updateRole = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     if (req.headers.authorization == null || req.headers.authorization == undefined || req.headers.authorization == '') {
-      return res.status(401).send({
+      return res.status(messageVI.mesagesCode.please_login.code).send({
         statusCode: res.statusCode,
-        message: 'Please log in',
+        message: messageVI.mesagesCode.please_login.message,
         success: false,
         data: null
       })
     }
+    req.body = await Function.lowerCaseFunction(req.body)
     const decodedToken = jwt.verify(req.headers.authorization, DEFAULT_SECRECT_KEY)
     if (decodedToken) {
       if (req.body.password != '' && req.body.password != null && req.body.password != undefined) {
@@ -233,23 +241,23 @@ exports.updateProfile = async (req, res) => {
       }, {
         new: true
       })
-      return res.status(200).send({
+      return res.status(messageVI.mesagesCode.update_profile_success.code).send({
         statusCode: res.statusCode,
-        message: 'Update success',
+        message: messageVI.mesagesCode.update_profile_success.message,
         success: true,
         data: user
       })
     }
-    return res.status(401).send({
+    return res.status(messageVI.mesagesCode.please_login.code).send({
       statusCode: res.statusCode,
-      message: 'Please log in',
+      message: messageVI.mesagesCode.please_login.message,
       success: false,
       data: null
     })
   } catch (e) {
-    return res.status(500).send({
+    return res.status(messageVI.mesagesCode.server_error.code).send({
       statusCode: res.statusCode,
-      message: 'Please check your server',
+      message: messageVI.mesagesCode.server_error.message,
       success: false,
       data: null
     })
