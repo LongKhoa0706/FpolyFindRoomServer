@@ -20,6 +20,7 @@ exports.addRoom = async (req,res,next) => {
         author: Validation.userId
       }).save()
       const rommCreated = await RoomModel.findById(room._id).populate('author')
+      
       return res.status(messageVI.mesagesCode.addroom_success.code).send({
         statusCode: res.statusCode,
         success:true,
@@ -35,6 +36,7 @@ exports.addRoom = async (req,res,next) => {
       })
     }
   } catch (e) {
+
     return res.status(messageVI.mesagesCode.server_error.code).send({
       statusCode: res.statusCode,
       success:false,

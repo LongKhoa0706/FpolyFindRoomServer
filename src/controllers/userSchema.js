@@ -101,7 +101,7 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const user = await UserModel.findOne({ phone: req.body.phone })
+    const user = await UserModel.findOne({ phone: req.body.phone }).populate('roles','role_name');
     if (user) {
       const isEqual = await brcypt.compare(req.body.password, user.password)
       if (isEqual) {
