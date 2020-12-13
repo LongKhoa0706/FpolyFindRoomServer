@@ -132,7 +132,7 @@ exports.rooms = async (req, res, next) => {
             $regex: '.*' + req.query.location + '.*' 
           }}
         ]
-      }).populate('author')
+      }).populate({ path: "author", populate: { path: 'roles',select: 'role_name' } })
       return res.status(200).send({
         statusCode: res.statusCode,
         success:true,
