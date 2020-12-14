@@ -73,7 +73,7 @@ exports.register = async (req, res) => {
         req.body.roles = [customer._id]
         req.body = await Function.lowerCaseFunction(req.body)
         const user = await new UserModel(req.body).save()
-        const dataUser = await UserModel.findById(user._id).populate('roles')
+        const dataUser = await UserModel.findById(user._id).populate('roles','role_name')
         return res.status(messageVI.mesagesCode.register_success.code).send({
           statusCode: res.statusCode,
           success: true, 
@@ -184,7 +184,7 @@ exports.updateRole = async (req, res) => {
       const role = await RoleModel.findOne({'role_name': req.body.role_name})
       if (role) {
         const user = await UserModel.findByIdAndUpdate(decodedToken.userId, {
-          roles: [role.id]
+          roles: role.id
         }, {
           new: true
         })

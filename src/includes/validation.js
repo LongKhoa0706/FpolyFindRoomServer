@@ -7,7 +7,9 @@ class Validation {
     async canDoAction ( req, cap,  args, validatedParams = [] ) {
         const auth = await Authorization.authorize(req, cap);
         this.userId = await Authorization.userId
+        console.log(auth)
         if ( auth == true ) {
+        
             return 200;
         }
         return 401;

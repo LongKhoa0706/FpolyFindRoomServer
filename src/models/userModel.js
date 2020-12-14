@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const UserModel = new Schema({
-    roles : [{
+    roles : {
         type: Schema.Types.ObjectId,
         ref: "Role"
-    }],
+    },
     email: {
         type: String
     },

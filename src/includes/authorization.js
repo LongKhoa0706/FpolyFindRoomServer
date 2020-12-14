@@ -14,13 +14,16 @@ class Authorization {
                 return false
             } else {
                 const decodedToken = jwt.verify(req.headers.authorization, DEFAULT_SECRECT_KEY)
-                const users = await UserModel.findById(decodedToken.userId).populate('roles')
+                const user = await UserModel.findById(decodedToken.userId).populate('roles')
                 this.userId = await decodedToken.userId
-                for ( let role of users.roles ) {
-                    if ( role.capabilities.indexOf(cap) !== -1 ) {
-                        return true
-                    }
+                if ( user.roles.capabilities.indexOf(cap) !== -1 ) {
+                    return true
                 }
+                // for ( let role of users.roles ) {
+                //     if ( role.capabilities.indexOf(cap) !== -1 ) {
+                //         return true
+                //     }
+                // }
             }
         }
         catch(e) {

@@ -23,7 +23,7 @@ router.post('/register', userSchema.register)
 router.post('/login', userSchema.login)
 router.post('/update-profile', userSchema.updateProfile)
 router.post('/check-phone', userSchema.checkPhone)
-router.post('/profile', userSchema.profile)
+router.get('/profile', userSchema.profile)
 router.post('/update-role-user', userSchema.updateRole)
 
 // Utility setup route
