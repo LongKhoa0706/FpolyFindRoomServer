@@ -115,7 +115,6 @@ exports.rooms = async (req, res, next) => {
       } else {
         req.query.type = req.query.type.toLowerCase()
       }
-      console.log(req.query)
       if (req.query.hasOwnProperty('location') == false) {
         req.query.location = ''
       } else {
@@ -268,6 +267,186 @@ exports.myRooms = async (req, res, next) => {
     return res.status(500).send({
       statusCode: res.statusCode,
       success: false,
+      message: messageVI.mesagesCode.server_error.message,
+      data: []
+    })
+  }
+}
+
+exports.roomsadmin = async (req, res, next) => {
+  try {
+    let code = await Validation.canDoAction(
+      req,
+      'roomsAdmin'
+    )
+    if (code === 200) {
+      if (req.query.hasOwnProperty('type') == false) {
+        req.query.type = ''
+      } else {
+        req.query.type = req.query.type.toLowerCase()
+      }
+      if (req.query.hasOwnProperty('location') == false) {
+        req.query.location = ''
+      } else {
+        req.query.location = req.query.location.toLowerCase()
+      }
+      const rooms = await RoomModel.find({
+        $and: [
+          {deleted_at: null }
+        ]
+      }).populate({ path: "author", populate: { path: 'roles',select: 'role_name' } })
+      return res.status(200).send({
+        statusCode: res.statusCode,
+        success:true,
+        message: messageVI.mesagesCode.get_room_success.message,
+        data: rooms
+      })
+    } else {
+      return res.status(401).send({
+        statusCode: res.statusCode,
+        success: false,
+        message: messageVI.mesagesCode.unauthenticate.message,
+        data: []
+      })
+    }
+  } catch (e) {
+    return res.status(500).send({
+      statusCode: res.statusCode,
+      success: false,
+      message: messageVI.mesagesCode.server_error.message,
+      data: []
+    })
+  }
+}
+
+exports.deleteRoomAdmin = async (req,res,next) => {
+  try {
+    let code = await Validation.canDoAction(
+      req,
+      'deleteRoomAdmin'
+    )
+    if (code === 200) {
+      const room = await RoomModel.findById(req.params.id).populate('author')
+      if (room == null || room == undefined || room.deleted_at != null) {
+        return res.status(messageVI.mesagesCode.not_found.code).send({
+          statusCode: res.statusCode,
+          success:false,
+          message: messageVI.mesagesCode.not_found.message,
+          data: []
+        })
+      }
+      const roomDeleted = await RoomModel.findByIdAndUpdate(req.params.id, {
+        deleted_at: new Date().getTime()
+      }, {
+        new: true
+      })
+      return res.status(messageVI.mesagesCode.delete_room_success.code).send({
+        statusCode: res.statusCode,
+        success: true,
+        message: messageVI.mesagesCode.delete_room_success.message,
+        data: room
+      })
+    } else {
+      return res.status(401).send({
+        statusCode: res.statusCode,
+        success: false,
+        message: messageVI.mesagesCode.unauthenticate.message,
+        data: []
+      })
+    }
+  } catch (e) {
+    return res.status(500).send({
+      statusCode: res.statusCode,
+      success: false,
+      message: messageVI.mesagesCode.server_error.message,
+      data: []
+    })
+  }
+}
+
+exports.roomAdmin = async (req,res,next) => {
+  try {
+    let code = await Validation.canDoAction(
+      req,
+      'roomAdmin'
+    )
+    if (code === 200) {
+      const room = await RoomModel.findById(req.params.id).populate('author')
+      if (room == null || room == undefined || room.deleted_at != null) {
+        return res.status(messageVI.mesagesCode.not_found.code).send({
+          statusCode: res.statusCode,
+          success:false,
+          message: messageVI.mesagesCode.not_found.message,
+          data: []
+        })
+      }
+      return res.status(messageVI.mesagesCode.info_room_success.code).send({
+        statusCode: res.statusCode,
+        success: true,
+        message: messageVI.mesagesCode.info_room_success.message,
+        data: room
+      })
+    } else {
+      return res.status(401).send({
+        statusCode: res.statusCode,
+        success: false,
+        message: messageVI.mesagesCode.unauthenticate.message,
+        data: []
+      })
+    }
+  } catch (e) {
+    return res.status(500).send({
+      statusCode: res.statusCode,
+      success: false,
+      message: messageVI.mesagesCode.server_error.message,
+      data: []
+    })
+  }
+}
+
+
+exports.updateRoomAdmin = async (req,res,next) => {
+  try {
+    let code = await Validation.canDoAction(
+      req,
+      'updateRoomAdmin'
+    )
+    if (code === messageVI.mesagesCode.ok.code) {
+      const roomValid = await RoomModel.findById(req.params.id)
+      if (roomValid == null || roomValid == undefined || roomValid.deleted_at != null) {
+        return res.status(messageVI.mesagesCode.not_found.code).send({
+          statusCode: res.statusCode,
+          success:false,
+          message: messageVI.mesagesCode.not_found.message,
+          data: []
+        })
+      } else {
+        req.body = await Function.lowerCaseFunction(req.body)
+        const room = await RoomModel.findByIdAndUpdate(roomValid._id, {
+          ...req.body
+        }, {
+          new: true
+        })
+        const rommUpdated = await RoomModel.findById(room._id).populate('author')
+        return res.status(messageVI.mesagesCode.addroom_success.code).send({
+          statusCode: res.statusCode,
+          success:true,
+          message: messageVI.mesagesCode.updateroom_success.message,
+          data: rommUpdated
+        })
+      }
+    } else {
+      return res.status(messageVI.mesagesCode.unauthenticate.code).send({
+        statusCode: res.statusCode,
+        success:false,
+        message: messageVI.mesagesCode.unauthenticate.message,
+        data: []
+      })
+    }
+  } catch (e) {
+    return res.status(messageVI.mesagesCode.server_error.code).send({
+      statusCode: res.statusCode,
+      success:false,
       message: messageVI.mesagesCode.server_error.message,
       data: []
     })

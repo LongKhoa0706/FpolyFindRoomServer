@@ -1,7 +1,7 @@
 const express = require('express')
 // const dbinit = require('./src/includes/dbInit')
 const app = express()
-const port = 8080
+const port = process.ENV.PORT || 80
 
 const generalRouter = require('./src/routers/index')
 

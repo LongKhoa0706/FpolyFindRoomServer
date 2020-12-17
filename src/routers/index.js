@@ -40,6 +40,10 @@ router.get('/rooms', roomSchema.rooms)
 router.get('/my-rooms', roomSchema.myRooms)
 router.get('/room/:id', roomSchema.room)
 router.get('/delete-room/:id', roomSchema.deleteRoom)
+router.post('/update-room-admin/:id', roomSchema.updateRoomAdmin)
+router.get('/rooms-admin', roomSchema.roomsadmin)
+router.get('/room-admin/:id', roomSchema.roomAdmin)
+router.get('/delete-room-admin/:id', roomSchema.deleteRoomAdmin)
 
 // Exports
 module.exports = router
