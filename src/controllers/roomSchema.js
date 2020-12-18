@@ -248,7 +248,7 @@ exports.myRooms = async (req, res, next) => {
       'myRooms'
     )
     if (code === 200) {
-      const rooms = await RoomModel.find({$and: [{deleted_at: null }, {author: Validation.userId}]}).populate('author')
+      const rooms = await RoomModel.find({$and: [{deleted_at: null }, {author: Validation.userId}]}).populate({ path: "author", populate: { path: 'roles',select: 'role_name' } })
       return res.status(200).send({
         statusCode: res.statusCode,
         success:true,
