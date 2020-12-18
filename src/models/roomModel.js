@@ -3,6 +3,18 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const RoomModel = new Schema({
+  amount_room:{
+    type: Number
+  },
+  amount_bathroom:{
+    type: Number
+  },
+  amount_bedroom:{
+    type: Number
+  },
+  acreage:{
+    type: Number
+  },
   title: {
     type: String
   },
